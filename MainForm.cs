@@ -46,9 +46,9 @@ namespace TinyDRPC
 
             runMinimized.Enabled = runOnStartup.Checked;
 
-            if(runMinimized.Enabled && runOnStartup.Enabled)
+            if (runMinimized.Enabled && runOnStartup.Enabled)
             {
-                
+
                 System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((obj) =>
                 {
                     this.Invoke(new MethodInvoker(delegate ()
@@ -57,7 +57,7 @@ namespace TinyDRPC
                         Hide();
                     }));
                 }), null, 1, Timeout.Infinite);
-                
+
             }
 
             if (config.saveRunningState == true && config.lastStateIsRunning == true)
@@ -408,6 +408,16 @@ namespace TinyDRPC
         private void exitContext_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new OpenBrowser("https://github.com/michioxd/TinyDRPC/tree/master?tab=readme-ov-file#how-to-get-discord-app-id");
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new OpenBrowser("https://github.com/michioxd/TinyDRPC/tree/master?tab=readme-ov-file#how-to-get-image-key");
         }
     }
 }

@@ -185,6 +185,7 @@
             linkLabel2.TabStop = true;
             linkLabel2.Text = "How to get Discord App ID";
             linkLabel2.VisitedLinkColor = Color.Teal;
+            linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
             // startDaemon
             // 
@@ -444,6 +445,7 @@
             linkLabel3.TabStop = true;
             linkLabel3.Text = "How to upload and get image key";
             linkLabel3.VisitedLinkColor = Color.Teal;
+            linkLabel3.LinkClicked += linkLabel3_LinkClicked;
             // 
             // tabPage3
             // 
