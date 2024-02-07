@@ -6,7 +6,21 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Resources\tinydrpc.ico</ApplicationIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Company></Company>
+    <Authors>michioxd</Authors>
+    <Description>Tiny Discord Rich Presence</Description>
+    <PackageProjectUrl>https://github.com/michioxd/TinyDRPC</PackageProjectUrl>
+    <PackageIcon>tinydrpc_100x100.png</PackageIcon>
+    <RepositoryUrl>https://github.com/michioxd/TinyDRPC</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\tinydrpc.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
@@ -28,7 +42,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <None Update="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Resources\tinydrpc_100x100.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -2,8 +2,13 @@
  * Orignal https://github.com/BlueMystical/Dark-Mode-Forms
  */
 
+using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using static System.Windows.Forms.DataFormats;
 
 namespace TinyDRPC.Theme
 {
@@ -335,7 +340,7 @@ namespace TinyDRPC.Theme
                 if (Window != null)
                 {
                     //SetWin32ApiTheme(Window);
-                    ThemeAllControls(Window);
+                    ApplySystemDarkTheme(Window);
 
                     //Window.
                     //protected override void CreateHandle()
@@ -354,7 +359,7 @@ namespace TinyDRPC.Theme
 
         /// <summary>Attemps to apply Window's Dark Style to the Control and all its childs.</summary>
         /// <param name="control"></param>
-        public static void ThemeAllControls(Control control = null)
+        public static void ApplySystemDarkTheme(Control control = null)
         {
             /* 			    
 				DWMWA_USE_IMMERSIVE_DARK_MODE:   https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowattribute
@@ -368,7 +373,7 @@ namespace TinyDRPC.Theme
 				SetWindowTheme:     https://learn.microsoft.com/en-us/windows/win32/api/uxtheme/nf-uxtheme-setwindowtheme
 				Causes a window to use a different set of visual style information than its class normally uses.
 			 */
-int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
+            int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
 
             SetWindowTheme(control.Handle, "DarkMode_Explorer", null);
 
@@ -378,7 +383,7 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
             foreach (Control child in control.Controls)
             {
                 if (child.Controls.Count != 0)
-                    ThemeAllControls(child);
+                    ApplySystemDarkTheme(child);
             }
         }
 
@@ -467,7 +472,7 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
             control.HandleCreated += (object sender, EventArgs e) =>
             {
                 //SetWin32ApiTheme(control);
-                ThemeAllControls(control);
+                ApplySystemDarkTheme(control);
             };
 
             if (control is Panel panel)
@@ -499,9 +504,9 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
             }
             if (control is ComboBox combo)
             {
-                //combo = new FlatCombo() { BorderColor = OScolors.ControlDark };
                 combo.FlatStyle = FStyle;
                 combo.BackColor = OScolors.Control;
+                control.GetType().GetProperty("ButtonColor")?.SetValue(control, OScolors.Surface);
                 combo.Invalidate();
             }
             if (control is MenuStrip menu)
@@ -511,11 +516,6 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
                 {
                     MyColors = OScolors
                 };
-
-                foreach (ToolStripMenuItem subMenu in menu.Items)
-                {
-                    subMenu.ForeColor = OScolors.TextActive;
-                }
             }
             if (control is ToolStrip toolBar)
             {
@@ -545,13 +545,16 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
                 grid.RowHeadersDefaultCellStyle.SelectionBackColor = OScolors.Accent;
                 grid.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             }
+            if (control is ProgressBar pBar)
+            {
+                pBar.BackColor = OScolors.Control;
+            }
 
             foreach (Control childControl in control.Controls)
             {
                 // Recursively process its children
                 ProcessControlsRecursively(childControl);
             }
-
         }
 
         // For Rounded Corners:
@@ -626,7 +629,7 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
     public class MyRenderer : ToolStripProfessionalRenderer
     {
         public bool ColorizeIcons { get; set; } = true;
-        public OSThemeColors MyColors { get; set; } //<- Your Custom Colors Colection
+        public OSThemeColors? MyColors { get; set; } //<- Your Custom Colors Colection
 
         public MyRenderer(ProfessionalColorTable table, bool pColorizeIcons = true) : base(table)
         {
@@ -685,20 +688,20 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
             Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
 
             Color gradientBegin = MyColors.Background; // Color.FromArgb(203, 225, 252);
-            Color gradientEnd = MyColors.Background; // Color.FromArgb(125, 165, 224);
+            Color gradientEnd = MyColors.Background;
 
             Pen BordersPencil = new Pen(MyColors.Background);
 
-            ToolStripButton button = e.Item as ToolStripButton;
+            ToolStripButton? button = e.Item as ToolStripButton;
             if (button.Pressed || button.Checked)
             {
-                gradientBegin = MyColors.Control; // Color.FromArgb(254, 128, 62);
-                gradientEnd = MyColors.Control; // Color.FromArgb(255, 223, 154);
+                gradientBegin = MyColors.Control;
+                gradientEnd = MyColors.Control;
             }
             else if (button.Selected)
             {
-                gradientBegin = MyColors.Accent;// Color.FromArgb(255, 255, 222);
-                gradientEnd = MyColors.Accent; // Color.FromArgb(255, 203, 136);
+                gradientBegin = MyColors.Accent;
+                gradientEnd = MyColors.Accent;
             }
 
             using (Brush b = new LinearGradientBrush(
@@ -711,32 +714,31 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
             }
 
             e.Graphics.DrawRectangle(
-                BordersPencil, //SystemPens.ControlDarkDark,
+                BordersPencil,
                 bounds);
 
             g.DrawLine(
-                BordersPencil, //SystemPens.ControlDarkDark,
+                BordersPencil,
                 bounds.X,
                 bounds.Y,
                 bounds.Width - 1,
                 bounds.Y);
 
             g.DrawLine(
-                BordersPencil, //SystemPens.ControlDarkDark,
+                BordersPencil,
                 bounds.X,
                 bounds.Y,
                 bounds.X,
                 bounds.Height - 1);
 
             ToolStrip toolStrip = button.Owner;
-            ToolStripButton nextItem = button.Owner.GetItemAt(
-                button.Bounds.X,
-                button.Bounds.Bottom + 1) as ToolStripButton;
 
-            if (nextItem == null)
+            if (button.Owner.GetItemAt(
+                button.Bounds.X,
+                button.Bounds.Bottom + 1) is not ToolStripButton nextItem)
             {
                 g.DrawLine(
-                    BordersPencil, //SystemPens.ControlDarkDark,
+                    BordersPencil,
                     bounds.X,
                     bounds.Height - 1,
                     bounds.X + bounds.Width - 1,
@@ -749,84 +751,21 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
         {
             Graphics g = e.Graphics;
             Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
-
             Color gradientBegin = MyColors.Background; // Color.FromArgb(203, 225, 252);
-            Color gradientEnd = MyColors.Background; // Color.FromArgb(125, 165, 224);
+            Color gradientEnd = MyColors.Background;
 
             Pen BordersPencil = new Pen(MyColors.Background);
 
-            ToolStripDropDownButton button = e.Item as ToolStripDropDownButton;
-            if (button.Pressed) // || button.Checked)
-            {
-                gradientBegin = MyColors.Control; //Color.FromArgb(254, 128, 62);
-                gradientEnd = MyColors.Control; //Color.FromArgb(255, 223, 154);
-            }
-            else if (button.Selected)
-            {
-                gradientBegin = MyColors.Accent;// Color.FromArgb(255, 255, 222);
-                gradientEnd = MyColors.Accent; // Color.FromArgb(255, 203, 136);
-            }
-
-            using (Brush b = new LinearGradientBrush(
-                bounds,
-                gradientBegin,
-                gradientEnd,
-                LinearGradientMode.Vertical))
-            {
-                g.FillRectangle(b, bounds);
-            }
-
-            e.Graphics.DrawRectangle(
-                BordersPencil, //SystemPens.ControlDarkDark,
-                bounds);
-
-            g.DrawLine(
-                BordersPencil, //SystemPens.ControlDarkDark,
-                bounds.X,
-                bounds.Y,
-                bounds.Width - 1,
-                bounds.Y);
-
-            g.DrawLine(
-                BordersPencil, //SystemPens.ControlDarkDark,
-                bounds.X,
-                bounds.Y,
-                bounds.X,
-                bounds.Height - 1);
-
-            ToolStrip toolStrip = button.Owner;
-            ToolStripButton nextItem = button.Owner.GetItemAt(
-                button.Bounds.X,
-                button.Bounds.Bottom + 1) as ToolStripButton;
-
-            if (nextItem == null)
-            {
-                g.DrawLine(
-                    BordersPencil, //SystemPens.ControlDarkDark,
-                    bounds.X,
-                    bounds.Height - 1,
-                    bounds.X + bounds.Width - 1,
-                    bounds.Height - 1);
-            }
-        }
-
-        // For SplitButtons on a ToolBar:
-        protected override void OnRenderSplitButtonBackground(ToolStripItemRenderEventArgs e)
-        {
-            Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
-            Color gradientBegin = MyColors.Background; // Color.FromArgb(203, 225, 252);
-            Color gradientEnd = MyColors.Background; // Color.FromArgb(125, 165, 224);
-
             //1. Determine the colors to use:
-            if (e.Item.Pressed) //|| e.Item.Checked)
+            if (e.Item.Pressed)
             {
-                gradientBegin = MyColors.Control; //Color.FromArgb(254, 128, 62);
-                gradientEnd = MyColors.Control; //Color.FromArgb(255, 223, 154);
+                gradientBegin = MyColors.Control;
+                gradientEnd = MyColors.Control;
             }
             else if (e.Item.Selected)
             {
-                gradientBegin = MyColors.Accent;// Color.FromArgb(255, 255, 222);
-                gradientEnd = MyColors.Accent; // Color.FromArgb(255, 203, 136);
+                gradientBegin = MyColors.Accent;
+                gradientEnd = MyColors.Accent;
             }
 
             //2. Draw the Box around the Control
@@ -839,15 +778,66 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
                 e.Graphics.FillRectangle(b, bounds);
             }
 
-            //3. Draw an OpenBox Chevron
-            Pen ChevronPen = new Pen(MyColors.BackgroundLight, 2);
-            Point P1 = new Point(bounds.Width - 10, (bounds.Height / 2) - 2);
-            Point P2 = new Point(bounds.Width - 1, (bounds.Height / 2) - 2);
-            Point P3 = new Point(bounds.Width - 5, (bounds.Height / 2) + 2);
+
+            //3. Draws the Chevron:
+            #region Chevron
+
+            //int Padding = 2; //<- From the right side
+            //Size cSize = new Size(8, 4); //<- Size of the Chevron: 8x4 px
+            //Pen ChevronPen = new Pen(MyColors.TextInactive, 2); //<- Color and Border Width
+            //Point P1 = new Point(bounds.Width - (cSize.Width + Padding), (bounds.Height / 2) - (cSize.Height / 2));
+            //Point P2 = new Point(bounds.Width - Padding, (bounds.Height / 2) - (cSize.Height / 2));
+            //Point P3 = new Point(bounds.Width - (cSize.Width / 2 + Padding), (bounds.Height / 2) + (cSize.Height / 2));
+
+            //e.Graphics.DrawLine(ChevronPen, P1, P3);
+            //e.Graphics.DrawLine(ChevronPen, P2, P3);
+
+            #endregion
+        }
+
+        // For SplitButtons on a ToolBar:
+        protected override void OnRenderSplitButtonBackground(ToolStripItemRenderEventArgs e)
+        {
+            Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
+            Color gradientBegin = MyColors.Background; // Color.FromArgb(203, 225, 252);
+            Color gradientEnd = MyColors.Background;
+
+            //1. Determine the colors to use:
+            if (e.Item.Pressed)
+            {
+                gradientBegin = MyColors.Control;
+                gradientEnd = MyColors.Control;
+            }
+            else if (e.Item.Selected)
+            {
+                gradientBegin = MyColors.Accent;
+                gradientEnd = MyColors.Accent;
+            }
+
+            //2. Draw the Box around the Control
+            using (Brush b = new LinearGradientBrush(
+                bounds,
+                gradientBegin,
+                gradientEnd,
+                LinearGradientMode.Vertical))
+            {
+                e.Graphics.FillRectangle(b, bounds);
+            }
+
+            //3. Draws the Chevron:
+            #region Chevron
+
+            int Padding = 2; //<- From the right side
+            Size cSize = new Size(8, 4); //<- Size of the Chevron: 8x4 px
+            Pen ChevronPen = new Pen(MyColors.TextInactive, 2); //<- Color and Border Width
+            Point P1 = new Point(bounds.Width - (cSize.Width + Padding), (bounds.Height / 2) - (cSize.Height / 2));
+            Point P2 = new Point(bounds.Width - Padding, (bounds.Height / 2) - (cSize.Height / 2));
+            Point P3 = new Point(bounds.Width - (cSize.Width / 2 + Padding), (bounds.Height / 2) + (cSize.Height / 2));
 
             e.Graphics.DrawLine(ChevronPen, P1, P3);
             e.Graphics.DrawLine(ChevronPen, P2, P3);
 
+            #endregion
         }
 
         // For the Text Color of all Items:
@@ -995,74 +985,204 @@ int[] DarkModeOn = new[] { 0x01 }; //<- 1=True, 0=False
         }
     }
 
-    public class FlatCombo : ComboBox
+    // https://github.com/r-aghaei/FlatComboExample/tree/master
+    public class FlatComboBox : ComboBox
     {
-        private const int WM_PAINT = 0xF;
-        private const int WM_CTLCOLORSTATIC = 0x13;
-
-        private int buttonWidth = SystemInformation.HorizontalScrollBarArrowWidth;
-        private Color borderColor = Color.Blue;
-
+        private Color borderColor = Color.Gray;
+        [DefaultValue(typeof(Color), "Gray")]
         public Color BorderColor
         {
             get { return borderColor; }
-            set { borderColor = value; Invalidate(); }
+            set
+            {
+                if (borderColor != value)
+                {
+                    borderColor = value;
+                    Invalidate();
+                }
+            }
         }
+        private Color buttonColor = Color.LightGray;
+        [DefaultValue(typeof(Color), "LightGray")]
+        public Color ButtonColor
+        {
+            get { return buttonColor; }
+            set
+            {
+                if (buttonColor != value)
+                {
+                    buttonColor = value;
+                    Invalidate();
+                }
+            }
+        }
+
         protected override void WndProc(ref Message m)
         {
-            base.WndProc(ref m);
             if (m.Msg == WM_PAINT && DropDownStyle != ComboBoxStyle.Simple)
             {
-                using (var g = Graphics.FromHwnd(Handle))
+                var clientRect = ClientRectangle;
+                var dropDownButtonWidth = SystemInformation.HorizontalScrollBarArrowWidth;
+                var outerBorder = new Rectangle(clientRect.Location,
+                    new Size(clientRect.Width - 1, clientRect.Height - 1));
+                var innerBorder = new Rectangle(outerBorder.X + 1, outerBorder.Y + 1,
+                    outerBorder.Width - dropDownButtonWidth - 2, outerBorder.Height - 2);
+                var innerInnerBorder = new Rectangle(innerBorder.X + 1, innerBorder.Y + 1,
+                    innerBorder.Width - 2, innerBorder.Height - 2);
+                var dropDownRect = new Rectangle(innerBorder.Right + 1, innerBorder.Y,
+                    dropDownButtonWidth, innerBorder.Height + 1);
+                if (RightToLeft == RightToLeft.Yes)
                 {
-                    var adjustMent = 0;
-                    if (FlatStyle == FlatStyle.Popup ||
-                       (FlatStyle == FlatStyle.Flat &&
-                       DropDownStyle == ComboBoxStyle.DropDownList))
-                        adjustMent = 1;
-                    var innerBorderWisth = 3;
-                    var innerBorderColor = BackColor;
-                    if (DropDownStyle == ComboBoxStyle.DropDownList &&
-                        (FlatStyle == FlatStyle.System || FlatStyle == FlatStyle.Standard))
-                        innerBorderColor = Color.FromArgb(0xCCCCCC);
-                    if (DropDownStyle == ComboBoxStyle.DropDown && !Enabled)
-                        innerBorderColor = SystemColors.Control;
-
-                    if (DropDownStyle == ComboBoxStyle.DropDown || Enabled == false)
-                    {
-                        using (var p = new Pen(innerBorderColor, innerBorderWisth))
-                        {
-                            p.Alignment = System.Drawing.Drawing2D.PenAlignment.Inset;
-                            g.DrawRectangle(p, 1, 1,
-                                Width - buttonWidth - adjustMent - 1, Height - 1);
-                        }
-                    }
-                    using (var p = new Pen(BorderColor))
-                    {
-                        g.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
-                        g.DrawLine(p, Width - buttonWidth - adjustMent,
-                            0, Width - buttonWidth - adjustMent, Height);
-                    }
+                    innerBorder.X = clientRect.Width - innerBorder.Right;
+                    innerInnerBorder.X = clientRect.Width - innerInnerBorder.Right;
+                    dropDownRect.X = clientRect.Width - dropDownRect.Right;
+                    dropDownRect.Width += 1;
                 }
-            }
-            if (m.Msg == WM_CTLCOLORSTATIC)
-            {
-                //----------------------------
-                using (var g = Graphics.FromHwnd(Handle))
+                var innerBorderColor = Enabled ? BackColor : SystemColors.Control;
+                var outerBorderColor = Enabled ? BorderColor : SystemColors.ControlDark;
+                var buttonColor = Enabled ? ButtonColor : SystemColors.Control;
+                var middle = new Point(dropDownRect.Left + dropDownRect.Width / 2,
+                    dropDownRect.Top + dropDownRect.Height / 2);
+                var arrow = new Point[]
                 {
-                    using (var p = new Pen(Color.FromArgb(93, 100, 103)))
-                    {
-                        // its a fat border so we need to draw 3 rectangles to cover it
-                        g.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
-                        g.DrawRectangle(p, 1, 1, Width - 3, Height - 3);
-                        g.DrawRectangle(p, 2, 2, Width - 5, Height - 5);
-                    }
+                    new Point(middle.X - 3, middle.Y - 2),
+                    new Point(middle.X + 4, middle.Y - 2),
+                    new Point(middle.X, middle.Y + 2)
+                };
+                var ps = new PAINTSTRUCT();
+                bool shoulEndPaint = false;
+                IntPtr dc;
+                if (m.WParam == IntPtr.Zero)
+                {
+                    dc = BeginPaint(Handle, ref ps);
+                    m.WParam = dc;
+                    shoulEndPaint = true;
                 }
-                //----------------------------
-            }
+                else
+                {
+                    dc = m.WParam;
+                }
+                var rgn = CreateRectRgn(innerInnerBorder.Left, innerInnerBorder.Top,
+                    innerInnerBorder.Right, innerInnerBorder.Bottom);
+                SelectClipRgn(dc, rgn);
+                DefWndProc(ref m);
+                DeleteObject(rgn);
+                rgn = CreateRectRgn(clientRect.Left, clientRect.Top,
+                    clientRect.Right, clientRect.Bottom);
+                SelectClipRgn(dc, rgn);
+                using (var g = Graphics.FromHdc(dc))
+                {
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+                    #region DropDown Button
+
+                    using (var b = new SolidBrush(buttonColor))
+                    {
+                        g.FillRectangle(b, dropDownRect);
+                    }
+
+                    #endregion
+
+                    #region Chevron
+
+                    Size cSize = new Size(8, 4); //<- Size of the Chevron: 8x4 px
+                    var chevron = new Point[]
+                    {
+                        new Point(middle.X - (cSize.Width / 2), middle.Y - (cSize.Height / 2)),
+                        new Point(middle.X + (cSize.Width / 2), middle.Y - (cSize.Height / 2)),
+                        new Point(middle.X, middle.Y + (cSize.Height / 2))
+                    };
+                    using (var chevronPen = new Pen(BorderColor, 2.5f)) //<- Color and Border Width
+                    {
+                        g.DrawLine(chevronPen, chevron[0], chevron[2]);
+                        g.DrawLine(chevronPen, chevron[1], chevron[2]);
+                    }
+
+                    //Replaced 'arrow' triangle with a Chevron
+                    //using (var b = new SolidBrush(outerBorderColor))
+                    //{
+                    //	g.FillPolygon(b, arrow);
+                    //}
+
+                    #endregion
+
+                    #region Borders
+
+                    using (var p = new Pen(innerBorderColor))
+                    {
+                        g.DrawRectangle(p, innerBorder);
+                        g.DrawRectangle(p, innerInnerBorder);
+                    }
+                    using (var p = new Pen(outerBorderColor))
+                    {
+                        g.DrawRectangle(p, outerBorder);
+                    }
+
+                    #endregion
+
+                }
+                if (shoulEndPaint)
+                    EndPaint(Handle, ref ps);
+                DeleteObject(rgn);
+            }
+            else
+                base.WndProc(ref m);
         }
 
+        private const int WM_PAINT = 0xF;
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int L, T, R, B;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PAINTSTRUCT
+        {
+            public IntPtr hdc;
+            public bool fErase;
+            public int rcPaint_left;
+            public int rcPaint_top;
+            public int rcPaint_right;
+            public int rcPaint_bottom;
+            public bool fRestore;
+            public bool fIncUpdate;
+            public int reserved1;
+            public int reserved2;
+            public int reserved3;
+            public int reserved4;
+            public int reserved5;
+            public int reserved6;
+            public int reserved7;
+            public int reserved8;
+        }
+        [DllImport("user32.dll")]
+        private static extern IntPtr BeginPaint(IntPtr hWnd,
+            [In, Out] ref PAINTSTRUCT lpPaint);
 
+        [DllImport("user32.dll")]
+        private static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT lpPaint);
+
+        [DllImport("gdi32.dll")]
+        public static extern int SelectClipRgn(IntPtr hDC, IntPtr hRgn);
+
+        [DllImport("user32.dll")]
+        public static extern int GetUpdateRgn(IntPtr hwnd, IntPtr hrgn, bool fErase);
+        public enum RegionFlags
+        {
+            ERROR = 0,
+            NULLREGION = 1,
+            SIMPLEREGION = 2,
+            COMPLEXREGION = 3,
+        }
+        [DllImport("gdi32.dll")]
+        internal static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("gdi32.dll")]
+        private static extern IntPtr CreateRectRgn(int x1, int y1, int x2, int y2);
     }
+
+
+
 }
