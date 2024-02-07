@@ -1,4 +1,4 @@
-using DiscordNowRich.Theme;
+using TinyDRPC.Theme;
 using DiscordRPC;
 using System;
 using System.Drawing;
@@ -32,17 +32,22 @@ namespace TinyDRPC
             startDaemon.Text = text;
         }
 
+        private void updateUICurrentStatus(String text)
+        {
+            status.Text = text;
+        }
+
         private void updateStatus()
         {
             drpc?.SetPresence(new RichPresence()
                 {
-                    Details = "Example Project",
-                    State = "csharp example",
+                    Details = topText.Text ?? "Please provide top text (TinyDRPC)",
+                    State = secondText.Text ?? "Please provide bottom text (TinyDRPC)",
                     Assets = new Assets()
                     {
-                        LargeImageKey = "image_large",
-                        LargeImageText = "Lachee's Discord IPC Library",
-                        SmallImageKey = "image_small"
+                        LargeImageKey = largeImageKey.Text,
+                        LargeImageText = largeImageText.Text,
+                        SmallImageKey = smallImageKey.Text
                     }
                 });
         }
@@ -57,6 +62,7 @@ namespace TinyDRPC
             }
 
             changeButtonState(false, "Starting daemon...");
+            updateUICurrentStatus("Starting daemon...");
 
             this.Invoke(new MethodInvoker(delegate ()
             {
@@ -65,9 +71,10 @@ namespace TinyDRPC
                 {
                     this.Invoke(new MethodInvoker(delegate ()
                     {
-                        MessageBox.Show("Cannon start daemon: " + e, "Error while starting daemon",
+                        MessageBox.Show("Cannon start daemon: " + e + "\nMake sure you started Discord Client.", "Error while starting daemon",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                         changeButtonState(true, "Start daemon");
+                        updateUICurrentStatus("Tried to start but got error");
                     }));
                     return;
                 };
@@ -77,6 +84,7 @@ namespace TinyDRPC
                     this.Invoke(new MethodInvoker(delegate ()
                     {
                         changeButtonState(true, "Stop daemon");
+                        updateUICurrentStatus("Running");
                     }));
                 };
 
@@ -95,6 +103,7 @@ namespace TinyDRPC
                 drpc.Dispose();
                 drpc = null;
                 changeButtonState(true, "Start daemon");
+                updateUICurrentStatus("Stopped");
             }
         }
     }
