@@ -27,7 +27,7 @@ namespace TinyDRPC.Utils
     public class ConfigurationManager
     {
         private static readonly string ConfigPathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TinyDRPC");
-        private static readonly string ConfigFileName = Path.Combine(ConfigPathName, "TinyDRPC.inf");
+        private static readonly string ConfigFileName = Path.Combine(ConfigPathName, "TinyDRPC.ini");
 
         public Configuration LoadConfiguration()
         {

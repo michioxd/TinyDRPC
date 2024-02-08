@@ -32,6 +32,10 @@ OutputBaseFilename=TinyDRPC-setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+AppMutex=Global\{#MyAppName}
+
+[UninstallDelete]
+Type: files; Name: "{app}\TinyDRPC.ini"
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -54,9 +58,35 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 function InitializeSetup: Boolean;
 begin
 #ifdef Dependency_Path_NetCoreCheck
-  Dependency_AddDotNet80;
   Dependency_AddDotNet80Desktop;
 #endif
 
   Result := True;
+end;
+
+function IsAppRunning(const FileName: string): Boolean;
+var
+  FWMIService: Variant;
+  FSWbemLocator: Variant;
+  FWbemObjectSet: Variant;
+begin
+  Result := false;
+  FSWbemLocator := CreateOleObject('WBEMScripting.SWBEMLocator');
+  FWMIService := FSWbemLocator.ConnectServer('', 'root\CIMV2', '', '');
+  FWbemObjectSet := FWMIService.ExecQuery(Format('SELECT Name FROM Win32_Process Where Name="%s"',[FileName]));
+  Result := (FWbemObjectSet.Count > 0);
+  FWbemObjectSet := Unassigned;
+  FWMIService := Unassigned;
+  FSWbemLocator := Unassigned;
+end;
+
+function InitializeUninstall(): Boolean;
+begin
+  if IsAppRunning('{#MyAppExeName}') then
+  begin
+    MsgBox('The TinyDRPC is currently running. Please close it before continuing.', mbError, MB_OK);
+    Result := False;
+  end
+  else
+    Result := True;
 end;
