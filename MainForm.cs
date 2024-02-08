@@ -3,13 +3,13 @@ using DiscordRPC;
 using TinyDRPC.Utils;
 using BlueMystic;
 using Microsoft.Win32;
-using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace TinyDRPC
 {
     public partial class MainForm : Form
     {
-
+        public string CurrentVersion = "1.1";
         private DiscordRpcClient? drpc;
 
         public MainForm()
@@ -17,10 +17,81 @@ namespace TinyDRPC
             InitializeComponent();
         }
 
+        private class VersionInfo
+        {
+            [JsonProperty("latestVersion")]
+            public string LatestVersion { get; set; }
+
+            [JsonProperty("download")]
+            public string Download { get; set; }
+        }
+
         private bool ValidateUrl(string url)
         {
             return Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult)
                 && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        }
+
+        private void CheckForUpdate()
+        {
+            checkUpdateBtn.Enabled = false;
+            checkUpdateBtn.Text = "Checking...";
+            _ = this.Invoke(new MethodInvoker(async delegate ()
+            {
+                using var httpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true });
+                try
+                {
+                    string jsonContent = await httpClient.GetStringAsync("https://michioxd.github.io/TinyDRPC/fetchVersion.json");
+                    var versionInfo = JsonConvert.DeserializeObject<VersionInfo>(jsonContent);
+                    checkUpdateBtn.Text = "Check update now";
+                    checkUpdateBtn.Enabled = true;
+
+                    if (versionInfo != null)
+                    {
+                        if (string.Compare(CurrentVersion, versionInfo.LatestVersion) < 0)
+                        {
+                            updateAvailableBtn.Visible = true;
+                            updateAvailableBtn.Click += (object sender, EventArgs e) =>
+                            {
+                                DialogResult result = MessageBox.Show($"A newer version ({versionInfo.LatestVersion}) is available for download. Do you want to go to browser and download it?", "TinyDRPC Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                if (result == DialogResult.Yes)
+                                {
+                                    new OpenBrowser(versionInfo.Download);
+                                }
+                            };
+                            anUpdateIsAvailableToDownloadToolStripMenuItem.Visible = true;
+                            anUpdateIsAvailableToDownloadToolStripMenuItem.Click += (object sender, EventArgs e) =>
+                            {
+                                DialogResult result = MessageBox.Show($"A newer version ({versionInfo.LatestVersion}) is available for download. Do you want to go to browser and download it?", "TinyDRPC Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                if (result == DialogResult.Yes)
+                                {
+                                    new OpenBrowser(versionInfo.Download);
+                                }
+                            };
+                            if (tinyDrpcNotifyIcon.Visible == true)
+                            {
+                                tinyDrpcNotifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                                tinyDrpcNotifyIcon.BalloonTipText = $"A newer version ({versionInfo.LatestVersion}) is available for download. Click this notification to download now!";
+                                tinyDrpcNotifyIcon.BalloonTipTitle = "An update of TinyRDPC is available to download";
+                                tinyDrpcNotifyIcon.BalloonTipClicked += (object sender, EventArgs e) =>
+                                {
+                                    DialogResult result = MessageBox.Show($"A newer version ({versionInfo.LatestVersion}) is available for download. Do you want to go to browser and download it?", "TinyDRPC Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                    if (result == DialogResult.Yes)
+                                    {
+                                        new OpenBrowser(versionInfo.Download);
+                                    }
+                                };
+                                tinyDrpcNotifyIcon.ShowBalloonTip(5000);
+                            }
+                        }
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    checkUpdateBtn.Text = "Got error during check update";
+                    checkUpdateBtn.Enabled = true;
+                }
+            }));
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -43,8 +114,10 @@ namespace TinyDRPC
             runOnStartup.CheckState = config.runOnStartup ? CheckState.Checked : CheckState.Unchecked;
             saveState.CheckState = config.saveRunningState ? CheckState.Checked : CheckState.Unchecked;
             runMinimized.CheckState = config.runMinimized ? CheckState.Checked : CheckState.Unchecked;
+            checkUpdateOnStartup.CheckState = config.checkUpdateOnStartup ? CheckState.Checked : CheckState.Unchecked;
 
             runMinimized.Enabled = runOnStartup.Checked;
+            versionLabel.Text = $"Version: {CurrentVersion} - powered by michioxd";
 
             if (config.runMinimized && config.runOnStartup)
             {
@@ -56,6 +129,11 @@ namespace TinyDRPC
                         Hide();
                     }));
                 }), null, 50, Timeout.Infinite);
+            }
+
+            if (checkUpdateOnStartup.Checked)
+            {
+                CheckForUpdate();
             }
 
             if (config.saveRunningState == true && config.lastStateIsRunning == true)
@@ -223,6 +301,15 @@ namespace TinyDRPC
             configManager.SaveConfiguration(config);
         }
 
+        private void checkUpdateOnStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            ConfigurationManager configManager = new ConfigurationManager();
+            TinyDRPC.Utils.Configuration config = configManager.LoadConfiguration();
+
+            config.checkUpdateOnStartup = checkUpdateOnStartup.Checked;
+            configManager.SaveConfiguration(config);
+        }
+
         private void changeLastRunningState(Boolean state)
         {
             ConfigurationManager configManager = new ConfigurationManager();
@@ -382,7 +469,7 @@ namespace TinyDRPC
                 tinyDrpcNotifyIcon.Visible = true;
                 ConfigurationManager configManager = new ConfigurationManager();
                 TinyDRPC.Utils.Configuration config = configManager.LoadConfiguration();
-                if(config.minimizedAtFirst == false)
+                if (config.minimizedAtFirst == false)
                 {
                     tinyDrpcNotifyIcon.BalloonTipIcon = ToolTipIcon.Info;
                     tinyDrpcNotifyIcon.BalloonTipText = "TinyDRPC is minimized in the system tray; to open the main window, double-click on this icon; you only see this tip once. Enjoy!";
@@ -427,5 +514,12 @@ namespace TinyDRPC
         {
             new OpenBrowser("https://github.com/michioxd/TinyDRPC/tree/master?tab=readme-ov-file#how-to-get-image-key");
         }
+
+        private void checkUpdateBtn_Click(object sender, EventArgs e)
+        {
+            CheckForUpdate();
+        }
+
+        
     }
 }

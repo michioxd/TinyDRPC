@@ -63,9 +63,49 @@ namespace TinyDRPC.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dialog_close {
+            get {
+                object obj = ResourceManager.GetObject("dialog_close", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dialog_more {
+            get {
+                object obj = ResourceManager.GetObject("dialog_more", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap lightning {
+            get {
+                object obj = ResourceManager.GetObject("lightning", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap tinydrpc_100x100 {
             get {
                 object obj = ResourceManager.GetObject("tinydrpc_100x100", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap update_drivers {
+            get {
+                object obj = ResourceManager.GetObject("update_drivers", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

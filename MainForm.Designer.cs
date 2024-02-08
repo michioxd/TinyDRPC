@@ -64,21 +64,26 @@
             label13 = new Label();
             label11 = new Label();
             tabPage2 = new TabPage();
+            label15 = new Label();
             linkLabel3 = new LinkLabel();
             tabPage3 = new TabPage();
+            checkUpdateBtn = new Button();
             runMinimized = new CheckBox();
             saveState = new CheckBox();
             tabPage4 = new TabPage();
             panel1 = new Panel();
-            label15 = new Label();
+            versionLabel = new Label();
             label2 = new Label();
             linkLabel4 = new LinkLabel();
             tinyDrpcNotifyIcon = new NotifyIcon(components);
             tinyDrpcTrayIconContext = new ContextMenuStrip(components);
+            anUpdateIsAvailableToDownloadToolStripMenuItem = new ToolStripMenuItem();
             showMainWindowToolStripMenuItem = new ToolStripMenuItem();
             startDaemonContext = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             exitContext = new ToolStripMenuItem();
+            updateAvailableBtn = new Button();
+            checkUpdateOnStartup = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -418,6 +423,7 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(label15);
             tabPage2.Controls.Add(linkLabel3);
             tabPage2.Controls.Add(label7);
             tabPage2.Controls.Add(label9);
@@ -432,6 +438,15 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Image";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(6, 291);
+            label15.Name = "label15";
+            label15.Size = new Size(336, 30);
+            label15.TabIndex = 8;
+            label15.Text = "Note: Make sure you uploaded your image to the same app id \r\nyou provided in tab Configuration";
             // 
             // linkLabel3
             // 
@@ -449,6 +464,8 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(checkUpdateOnStartup);
+            tabPage3.Controls.Add(checkUpdateBtn);
             tabPage3.Controls.Add(runMinimized);
             tabPage3.Controls.Add(discordAppId);
             tabPage3.Controls.Add(linkLabel2);
@@ -463,6 +480,16 @@
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Configuration";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // checkUpdateBtn
+            // 
+            checkUpdateBtn.Location = new Point(6, 149);
+            checkUpdateBtn.Name = "checkUpdateBtn";
+            checkUpdateBtn.Size = new Size(207, 23);
+            checkUpdateBtn.TabIndex = 11;
+            checkUpdateBtn.Text = "Check update now";
+            checkUpdateBtn.UseVisualStyleBackColor = true;
+            checkUpdateBtn.Click += checkUpdateBtn_Click;
             // 
             // runMinimized
             // 
@@ -481,16 +508,16 @@
             saveState.AutoSize = true;
             saveState.Location = new Point(6, 99);
             saveState.Name = "saveState";
-            saveState.Size = new Size(203, 19);
+            saveState.Size = new Size(207, 19);
             saveState.TabIndex = 9;
-            saveState.Text = "Save running state for next statup";
+            saveState.Text = "Save running state for next startup";
             saveState.UseVisualStyleBackColor = true;
             saveState.CheckedChanged += saveState_CheckedChanged;
             // 
             // tabPage4
             // 
             tabPage4.Controls.Add(panel1);
-            tabPage4.Controls.Add(label15);
+            tabPage4.Controls.Add(versionLabel);
             tabPage4.Controls.Add(label2);
             tabPage4.Controls.Add(linkLabel4);
             tabPage4.Location = new Point(4, 24);
@@ -509,14 +536,14 @@
             panel1.Size = new Size(100, 100);
             panel1.TabIndex = 0;
             // 
-            // label15
+            // versionLabel
             // 
-            label15.AutoSize = true;
-            label15.Location = new Point(87, 177);
-            label15.Name = "label15";
-            label15.Size = new Size(192, 15);
-            label15.TabIndex = 1;
-            label15.Text = "Version: 1.0 - powered by michioxd";
+            versionLabel.AutoSize = true;
+            versionLabel.Location = new Point(87, 177);
+            versionLabel.Name = "versionLabel";
+            versionLabel.Size = new Size(192, 15);
+            versionLabel.TabIndex = 1;
+            versionLabel.Text = "Version: 1.1 - powered by michioxd";
             // 
             // label2
             // 
@@ -550,35 +577,73 @@
             // 
             // tinyDrpcTrayIconContext
             // 
-            tinyDrpcTrayIconContext.Items.AddRange(new ToolStripItem[] { showMainWindowToolStripMenuItem, startDaemonContext, toolStripSeparator1, exitContext });
+            tinyDrpcTrayIconContext.Items.AddRange(new ToolStripItem[] { anUpdateIsAvailableToDownloadToolStripMenuItem, showMainWindowToolStripMenuItem, startDaemonContext, toolStripSeparator1, exitContext });
             tinyDrpcTrayIconContext.Name = "tinyDrpcTrayIconContext";
-            tinyDrpcTrayIconContext.Size = new Size(181, 76);
+            tinyDrpcTrayIconContext.Size = new Size(266, 98);
+            // 
+            // anUpdateIsAvailableToDownloadToolStripMenuItem
+            // 
+            anUpdateIsAvailableToDownloadToolStripMenuItem.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            anUpdateIsAvailableToDownloadToolStripMenuItem.Image = Properties.Resources.update_drivers;
+            anUpdateIsAvailableToDownloadToolStripMenuItem.Name = "anUpdateIsAvailableToDownloadToolStripMenuItem";
+            anUpdateIsAvailableToDownloadToolStripMenuItem.Size = new Size(265, 22);
+            anUpdateIsAvailableToDownloadToolStripMenuItem.Text = "An update is available to download";
+            anUpdateIsAvailableToDownloadToolStripMenuItem.Visible = false;
             // 
             // showMainWindowToolStripMenuItem
             // 
+            showMainWindowToolStripMenuItem.Image = Properties.Resources.dialog_more;
             showMainWindowToolStripMenuItem.Name = "showMainWindowToolStripMenuItem";
-            showMainWindowToolStripMenuItem.Size = new Size(180, 22);
+            showMainWindowToolStripMenuItem.Size = new Size(265, 22);
             showMainWindowToolStripMenuItem.Text = "Show Main Window";
             showMainWindowToolStripMenuItem.Click += showMainWindowToolStripMenuItem_Click;
             // 
             // startDaemonContext
             // 
+            startDaemonContext.Image = Properties.Resources.lightning;
             startDaemonContext.Name = "startDaemonContext";
-            startDaemonContext.Size = new Size(180, 22);
+            startDaemonContext.Size = new Size(265, 22);
             startDaemonContext.Text = "Start daemon";
             startDaemonContext.Click += startDaemonContext_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(262, 6);
             // 
             // exitContext
             // 
+            exitContext.Image = Properties.Resources.dialog_close;
             exitContext.Name = "exitContext";
-            exitContext.Size = new Size(180, 22);
+            exitContext.Size = new Size(265, 22);
             exitContext.Text = "Quit TinyDRPC";
             exitContext.Click += exitContext_Click;
+            // 
+            // updateAvailableBtn
+            // 
+            updateAvailableBtn.AccessibleDescription = "An update is available to download.";
+            updateAvailableBtn.Image = Properties.Resources.update_drivers;
+            updateAvailableBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            updateAvailableBtn.Location = new Point(273, 12);
+            updateAvailableBtn.Name = "updateAvailableBtn";
+            updateAvailableBtn.Size = new Size(120, 25);
+            updateAvailableBtn.TabIndex = 12;
+            updateAvailableBtn.Text = "      Update available";
+            updateAvailableBtn.UseVisualStyleBackColor = true;
+            updateAvailableBtn.Visible = false;
+            // 
+            // checkUpdateOnStartup
+            // 
+            checkUpdateOnStartup.AutoSize = true;
+            checkUpdateOnStartup.Checked = true;
+            checkUpdateOnStartup.CheckState = CheckState.Checked;
+            checkUpdateOnStartup.Location = new Point(6, 124);
+            checkUpdateOnStartup.Name = "checkUpdateOnStartup";
+            checkUpdateOnStartup.Size = new Size(156, 19);
+            checkUpdateOnStartup.TabIndex = 12;
+            checkUpdateOnStartup.Text = "Check update on startup";
+            checkUpdateOnStartup.UseVisualStyleBackColor = true;
+            checkUpdateOnStartup.CheckedChanged += checkUpdateOnStartup_CheckedChanged;
             // 
             // MainForm
             // 
@@ -586,6 +651,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;
             ClientSize = new Size(404, 513);
+            Controls.Add(updateAvailableBtn);
             Controls.Add(tabControl1);
             Controls.Add(status);
             Controls.Add(label10);
@@ -654,7 +720,7 @@
         private TabPage tabPage4;
         private LinkLabel linkLabel3;
         private Panel panel1;
-        private Label label15;
+        private Label versionLabel;
         private Label label2;
         private LinkLabel linkLabel4;
         private NotifyIcon tinyDrpcNotifyIcon;
@@ -665,5 +731,10 @@
         private ToolStripMenuItem showMainWindowToolStripMenuItem;
         private CheckBox saveState;
         private CheckBox runMinimized;
+        private Button updateAvailableBtn;
+        private ToolStripMenuItem anUpdateIsAvailableToDownloadToolStripMenuItem;
+        private Label label15;
+        private Button checkUpdateBtn;
+        private CheckBox checkUpdateOnStartup;
     }
 }

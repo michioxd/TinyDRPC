@@ -22,6 +22,7 @@ namespace TinyDRPC.Utils
         public bool lastStateIsRunning { get; set; }
         public bool runMinimized { get; set; }
         public bool minimizedAtFirst { get; set; }
+        public bool checkUpdateOnStartup { get; set; }
     }
 
     public class ConfigurationManager
@@ -77,6 +78,7 @@ namespace TinyDRPC.Utils
                 writer.WriteLine($"lastStateIsRunning={(config.lastStateIsRunning ? "1" : "0")}");
                 writer.WriteLine($"runMinimized={(config.runMinimized ? "1" : "0")}");
                 writer.WriteLine($"minimizedAtFirst={(config.minimizedAtFirst ? "1" : "0")}");
+                writer.WriteLine($"checkUpdateOnStartup={(config.checkUpdateOnStartup ? "1" : "0")}");
             }
         }
 
@@ -135,6 +137,9 @@ namespace TinyDRPC.Utils
                 case "minimizedAtFirst":
                     config.minimizedAtFirst = (value == "1") ? true : false;
                     break;
+                case "checkUpdateOnStartup":
+                    config.checkUpdateOnStartup = (value == "1") ? true : false;
+                    break;
                 default:
                     throw new Exception($"Unknown key: {key}");
             }
@@ -160,7 +165,8 @@ namespace TinyDRPC.Utils
                 saveRunningState = true,
                 lastStateIsRunning = false,
                 runMinimized = true,
-                minimizedAtFirst = false
+                minimizedAtFirst = false,
+                checkUpdateOnStartup = true
             };
             SaveConfiguration(config);
             return config;
