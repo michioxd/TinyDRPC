@@ -247,6 +247,13 @@ namespace TinyDRPC
         private void updateUICurrentStatus(String text)
         {
             status.Text = text;
+            if(tinyDrpcNotifyIcon.Visible == true)
+            {
+                tinyDrpcNotifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                tinyDrpcNotifyIcon.BalloonTipText = text;
+                tinyDrpcNotifyIcon.BalloonTipTitle = "TinyDRPC";
+                tinyDrpcNotifyIcon.ShowBalloonTip(5000);
+            }
         }
 
         private void updateStatus()

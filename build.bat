@@ -1,6 +1,6 @@
 @echo off
 
-rmdir /s /q ".\dist"
+rmdir /s /q ".\dist" ".\bin\Release"
 
 echo Building
 dotnet publish -c Release -o ".\dist\bin\nor2r"
