@@ -2,15 +2,28 @@
 
 Tiny Discord Rich Presence Client, customize your "Playing" status, written in C# using [discord-rpc-csharp](https://github.com/Lachee/discord-rpc-csharp)
 
-![image](https://github.com/michioxd/TinyDRPC/assets/80969068/bdfbd836-d25b-4b33-8af0-dfd12dd55c93)
+![image](https://github.com/michioxd/TinyDRPC/assets/80969068/82dc5d8b-ac5f-4b36-aa5a-1112aa946f40)
 
 ![image](https://github.com/michioxd/TinyDRPC/assets/80969068/5d1a8e6a-ae82-4a60-af05-3edc38e7b0ba)
 
 ## Features
 
 - Top and bottom text
-- Button
+ 
+  ![image](https://github.com/michioxd/TinyDRPC/assets/80969068/e08b97ce-d0bd-411d-985a-59294b9b696f)
+
+- Button (max 2)
+
+  ![image](https://github.com/michioxd/TinyDRPC/assets/80969068/545bb26a-ea2e-4b15-b3c6-8ace2ee2403e)
+
 - Large/small image
+
+  ![image](https://github.com/michioxd/TinyDRPC/assets/80969068/c6c7f2be-929d-400b-b7cc-83f0472a0660)
+ 
+- Minimize to tray icon
+
+  ![image](https://github.com/michioxd/TinyDRPC/assets/80969068/a213c282-4092-456f-b494-7a17096df610)
+  
 - Run on startup
 - Save running state for next startup
 
@@ -21,6 +34,12 @@ Tiny Discord Rich Presence Client, customize your "Playing" status, written in C
 - Customize setting for your own.
 
 ## Tutorial
+
+### How to custom "Playing \<your wanted name\>"
+
+- Go to Configuration tab.
+- Enter your Discord App ID (don't have?, [create one](#how-to-get-discord-app-id)).
+- If daemon is running, stop it then start again.
 
 ### How to get Discord App ID
 
