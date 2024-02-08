@@ -1,8 +1,7 @@
 using TinyDRPC.Theme;
 using DiscordRPC;
 using TinyDRPC.Utils;
-using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
+using BlueMystic;
 using Microsoft.Win32;
 
 namespace TinyDRPC
@@ -98,7 +97,6 @@ namespace TinyDRPC
 
             config.discordAppId = discordAppId.Text;
             configManager.SaveConfiguration(config);
-            applyChange.Enabled = true;
         }
 
         private void button1Label_TextChanged(object sender, EventArgs e)
