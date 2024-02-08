@@ -46,9 +46,8 @@ namespace TinyDRPC
 
             runMinimized.Enabled = runOnStartup.Checked;
 
-            if (runMinimized.Enabled && runOnStartup.Enabled)
+            if (config.runMinimized && config.runOnStartup)
             {
-
                 System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((obj) =>
                 {
                     this.Invoke(new MethodInvoker(delegate ()
@@ -56,8 +55,7 @@ namespace TinyDRPC
                         tinyDrpcNotifyIcon.Visible = true;
                         Hide();
                     }));
-                }), null, 1, Timeout.Infinite);
-
+                }), null, 50, Timeout.Infinite);
             }
 
             if (config.saveRunningState == true && config.lastStateIsRunning == true)
@@ -247,13 +245,6 @@ namespace TinyDRPC
         private void updateUICurrentStatus(String text)
         {
             status.Text = text;
-            if(tinyDrpcNotifyIcon.Visible == true)
-            {
-                tinyDrpcNotifyIcon.BalloonTipIcon = ToolTipIcon.Info;
-                tinyDrpcNotifyIcon.BalloonTipText = text;
-                tinyDrpcNotifyIcon.BalloonTipTitle = "TinyDRPC";
-                tinyDrpcNotifyIcon.ShowBalloonTip(5000);
-            }
         }
 
         private void updateStatus()
