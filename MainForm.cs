@@ -3,6 +3,7 @@ using DiscordRPC;
 using TinyDRPC.Utils;
 using BlueMystic;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace TinyDRPC
 {
@@ -381,6 +382,17 @@ namespace TinyDRPC
             {
                 Hide();
                 tinyDrpcNotifyIcon.Visible = true;
+                ConfigurationManager configManager = new ConfigurationManager();
+                TinyDRPC.Utils.Configuration config = configManager.LoadConfiguration();
+                if(config.minimizedAtFirst == false)
+                {
+                    tinyDrpcNotifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                    tinyDrpcNotifyIcon.BalloonTipText = "TinyDRPC is minimized in the system tray; to open the main window, double-click on this icon; you only see this tip once. Enjoy!";
+                    tinyDrpcNotifyIcon.BalloonTipTitle = "TinyDRPC is now minimized at system tray";
+                    tinyDrpcNotifyIcon.ShowBalloonTip(5000);
+                    config.minimizedAtFirst = true;
+                    configManager.SaveConfiguration(config);
+                }
             }
         }
 

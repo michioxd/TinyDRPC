@@ -21,11 +21,13 @@ namespace TinyDRPC.Utils
         public bool saveRunningState { get; set; }
         public bool lastStateIsRunning { get; set; }
         public bool runMinimized { get; set; }
+        public bool minimizedAtFirst { get; set; }
     }
 
     public class ConfigurationManager
     {
-        private const string ConfigFileName = "TinyDRPC.inf";
+        private static readonly string ConfigPathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TinyDRPC");
+        private static readonly string ConfigFileName = Path.Combine(ConfigPathName, "TinyDRPC.inf");
 
         public Configuration LoadConfiguration()
         {
@@ -55,6 +57,7 @@ namespace TinyDRPC.Utils
 
         public void SaveConfiguration(Configuration config)
         {
+            Directory.CreateDirectory(ConfigPathName);
             using (StreamWriter writer = new StreamWriter(ConfigFileName))
             {
                 writer.WriteLine($"topText={config.topText}");
@@ -65,7 +68,7 @@ namespace TinyDRPC.Utils
                 writer.WriteLine($"button1Url={config.button1Url}");
                 writer.WriteLine($"button2Url={config.button2Url}");
                 writer.WriteLine($"largeImageKey={config.largeImageKey}");
-                writer.WriteLine($"largeImageText={config.largeImageKey}");
+                writer.WriteLine($"largeImageText={config.largeImageText}");
                 writer.WriteLine($"smallImageKey={config.smallImageKey}");
                 writer.WriteLine($"enableButton1={(config.enableButton1 ? "1" : "0")}");
                 writer.WriteLine($"enableButton2={(config.enableButton2 ? "1" : "0")}");
@@ -73,6 +76,7 @@ namespace TinyDRPC.Utils
                 writer.WriteLine($"saveRunningState={(config.saveRunningState ? "1" : "0")}");
                 writer.WriteLine($"lastStateIsRunning={(config.lastStateIsRunning ? "1" : "0")}");
                 writer.WriteLine($"runMinimized={(config.runMinimized ? "1" : "0")}");
+                writer.WriteLine($"minimizedAtFirst={(config.minimizedAtFirst ? "1" : "0")}");
             }
         }
 
@@ -128,6 +132,9 @@ namespace TinyDRPC.Utils
                 case "runMinimized":
                     config.runMinimized = (value == "1") ? true : false;
                     break;
+                case "minimizedAtFirst":
+                    config.minimizedAtFirst = (value == "1") ? true : false;
+                    break;
                 default:
                     throw new Exception($"Unknown key: {key}");
             }
@@ -152,7 +159,8 @@ namespace TinyDRPC.Utils
                 runOnStartup = false,
                 saveRunningState = true,
                 lastStateIsRunning = false,
-                runMinimized = true
+                runMinimized = true,
+                minimizedAtFirst = false
             };
             SaveConfiguration(config);
             return config;

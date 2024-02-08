@@ -33,6 +33,15 @@ Tiny Discord Rich Presence Client, customize your "Playing" status, written in C
 - Install it then run it (or you can download portable version).
 - Customize setting for your own.
 
+## Development
+
+- Required Visual Studio 2022 and .NET SDK 8.0 installed
+
+## Building
+
+- Make sure you have `iscc.exe` (Inno Setup Compiler), `7z`, and `dotnet` (remember add to PATH if you don't have)
+- Run `build.bat`
+
 ## Tutorial
 
 ### How to custom "Playing \<your wanted name\>"
@@ -72,3 +81,7 @@ Tiny Discord Rich Presence Client, customize your "Playing" status, written in C
 ## License 
 
 [MIT License](LICENSE.txt)
+
+## Authors
+
+[michioxd](https://github.com/michioxd)
