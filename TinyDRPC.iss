@@ -5,7 +5,7 @@
 #include "CodeDependencies.iss"
 
 #define MyAppName "TinyDRPC"
-#define MyAppVersion "1.1"
+#define MyAppVersion "1.2"
 #define MyAppPublisher "michioxd"
 #define MyAppURL "https://github.com/michioxd/TinyDRPC"
 #define MyAppExeName "TinyDRPC.exe"

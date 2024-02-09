@@ -39,11 +39,11 @@ namespace TinyDRPC.Utils
 
                 foreach (string line in lines)
                 {
-                    string[] parts = line.Split('=');
-                    if (parts.Length == 2)
+                    int index = line.IndexOf('=');
+                    if (index > 0)
                     {
-                        string key = parts[0].Trim();
-                        string value = parts[1].Trim();
+                        string key = line.Substring(0, index).Trim();
+                        string value = line.Substring(index + 1).Trim();
                         SetProperty(config, key, value);
                     }
                 }

@@ -16,7 +16,8 @@
     <PackageIcon>tinydrpc_100x100.png</PackageIcon>
     <RepositoryUrl>https://github.com/michioxd/TinyDRPC</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.1</Version>
+    <Version>1.2</Version>
+    <AssemblyVersion>1.2</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

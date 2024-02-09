@@ -9,7 +9,7 @@ namespace TinyDRPC
 {
     public partial class MainForm : Form
     {
-        public string CurrentVersion = "1.1";
+        public string CurrentVersion = "1.2";
         private DiscordRpcClient? drpc;
 
         public MainForm()
@@ -119,18 +119,6 @@ namespace TinyDRPC
             runMinimized.Enabled = runOnStartup.Checked;
             versionLabel.Text = $"Version: {CurrentVersion} - powered by michioxd";
 
-            if (config.runMinimized && config.runOnStartup)
-            {
-                System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((obj) =>
-                {
-                    this.Invoke(new MethodInvoker(delegate ()
-                    {
-                        tinyDrpcNotifyIcon.Visible = true;
-                        Hide();
-                    }));
-                }), null, 50, Timeout.Infinite);
-            }
-
             if (checkUpdateOnStartup.Checked)
             {
                 CheckForUpdate();
@@ -144,6 +132,18 @@ namespace TinyDRPC
             switch (SystemTheme.Status())
             {
                 case 0: _ = new DarkModeCS(this); break;
+            }
+
+            if (config.runMinimized && config.runOnStartup)
+            {
+                System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((obj) =>
+                {
+                    this.Invoke(new MethodInvoker(delegate ()
+                    {
+                        tinyDrpcNotifyIcon.Visible = true;
+                        Hide();
+                    }));
+                }), null, 100, Timeout.Infinite);
             }
         }
 

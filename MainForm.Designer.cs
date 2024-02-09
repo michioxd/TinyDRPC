@@ -67,6 +67,7 @@
             label15 = new Label();
             linkLabel3 = new LinkLabel();
             tabPage3 = new TabPage();
+            checkUpdateOnStartup = new CheckBox();
             checkUpdateBtn = new Button();
             runMinimized = new CheckBox();
             saveState = new CheckBox();
@@ -83,7 +84,6 @@
             toolStripSeparator1 = new ToolStripSeparator();
             exitContext = new ToolStripMenuItem();
             updateAvailableBtn = new Button();
-            checkUpdateOnStartup = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -481,6 +481,19 @@
             tabPage3.Text = "Configuration";
             tabPage3.UseVisualStyleBackColor = true;
             // 
+            // checkUpdateOnStartup
+            // 
+            checkUpdateOnStartup.AutoSize = true;
+            checkUpdateOnStartup.Checked = true;
+            checkUpdateOnStartup.CheckState = CheckState.Checked;
+            checkUpdateOnStartup.Location = new Point(6, 124);
+            checkUpdateOnStartup.Name = "checkUpdateOnStartup";
+            checkUpdateOnStartup.Size = new Size(156, 19);
+            checkUpdateOnStartup.TabIndex = 12;
+            checkUpdateOnStartup.Text = "Check update on startup";
+            checkUpdateOnStartup.UseVisualStyleBackColor = true;
+            checkUpdateOnStartup.CheckedChanged += checkUpdateOnStartup_CheckedChanged;
+            // 
             // checkUpdateBtn
             // 
             checkUpdateBtn.Location = new Point(6, 149);
@@ -543,7 +556,7 @@
             versionLabel.Name = "versionLabel";
             versionLabel.Size = new Size(192, 15);
             versionLabel.TabIndex = 1;
-            versionLabel.Text = "Version: 1.1 - powered by michioxd";
+            versionLabel.Text = "Version: 1.2 - powered by michioxd";
             // 
             // label2
             // 
@@ -631,19 +644,6 @@
             updateAvailableBtn.Text = "      Update available";
             updateAvailableBtn.UseVisualStyleBackColor = true;
             updateAvailableBtn.Visible = false;
-            // 
-            // checkUpdateOnStartup
-            // 
-            checkUpdateOnStartup.AutoSize = true;
-            checkUpdateOnStartup.Checked = true;
-            checkUpdateOnStartup.CheckState = CheckState.Checked;
-            checkUpdateOnStartup.Location = new Point(6, 124);
-            checkUpdateOnStartup.Name = "checkUpdateOnStartup";
-            checkUpdateOnStartup.Size = new Size(156, 19);
-            checkUpdateOnStartup.TabIndex = 12;
-            checkUpdateOnStartup.Text = "Check update on startup";
-            checkUpdateOnStartup.UseVisualStyleBackColor = true;
-            checkUpdateOnStartup.CheckedChanged += checkUpdateOnStartup_CheckedChanged;
             // 
             // MainForm
             // 
